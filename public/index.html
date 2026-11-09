@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="description" content="Roll a color-matched outfit from clothes you already own.">
-  <title>Outfit Roll — A little luck looks good.</title>
+  <title>Outfit Roll</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23c9f46a'/%3E%3Cpath d='M8 8h4v4H8zm6 6h4v4h-4zm6 6h4v4h-4z' fill='%2323211c'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="/style.css">
   <script src="https://unpkg.com/colorthief@3/dist/umd/color-thief.global.js" defer></script>
@@ -36,7 +36,7 @@
         <i class="dot-new" id="mood-dot" hidden></i>
       </a>
     </div>
-    <p class="side-foot">A little luck<br>looks good <b>✦</b></p>
+    <p class="side-foot">Your closet stays in this browser.</p>
   </nav>
 
   <main class="views">
@@ -45,9 +45,9 @@
     <section class="view" id="view-roll" data-view="roll" aria-labelledby="roll-title">
       <div class="roll-layout">
         <div class="roll-aside">
-          <p class="eyebrow"><span class="dot"></span> Your closet, remixed</p>
-          <h1 id="roll-title">Good fits.<br><em>By chance.</em></h1>
-          <p class="lede">Pick the vibe, roll the dice, and see what clicks.</p>
+          <p class="date" id="today"></p>
+          <h1 id="roll-title">Today's outfit</h1>
+          <p class="lede">Pick a vibe, then roll. We'll match colors from your closet.</p>
           <button class="filter-pill" id="open-filters" type="button" aria-haspopup="dialog">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg>
             <span id="filter-summary">Any occasion · Any weather</span>
@@ -60,14 +60,14 @@
 
         <div class="card result" id="result" aria-busy="false">
           <div class="result-head">
-            <span class="label">Your look</span>
-            <span class="chip" id="rule">READY TO ROLL</span>
+            <span class="label">Color match</span>
+            <span class="chip" id="rule">Not rolled yet</span>
           </div>
-          <div id="look" class="look"><p class="empty-look">Load the sample closet or add your own pieces to get rolling.</p></div>
+          <div id="look" class="look"><p class="empty-look">Nothing rolled yet. Add a few clothes, then tap Roll.</p></div>
           <a class="go-closet" id="go-closet" href="#closet">Open closet ›</a>
           <p id="roll-status" class="feedback" role="status"></p>
           <div id="stylist" hidden>
-            <button id="why" class="why" type="button" aria-haspopup="dialog"><span>✦ Why does this work?</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
+            <button id="why" class="why" type="button" aria-haspopup="dialog"><span>Why this works</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
           </div>
         </div>
       </div>
@@ -77,9 +77,8 @@
     <section class="view" id="view-closet" data-view="closet" aria-labelledby="closet-title" hidden>
       <header class="view-head">
         <div>
-          <p class="eyebrow">The wardrobe</p>
           <h2 id="closet-title">Closet</h2>
-          <p class="sub"><span id="closet-count">No pieces yet</span> · Start with a top, a bottom, and shoes.</p>
+          <p class="sub"><span id="closet-count">No items yet</span> · You need a top, a bottom, and shoes.</p>
         </div>
         <button class="round-btn" id="open-add" type="button" aria-label="Add to closet" aria-haspopup="dialog">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
@@ -88,20 +87,19 @@
       <p id="closet-status" class="feedback toast" role="status"></p>
       <div class="closet-empty" id="closet-empty">
         <span class="empty-die" aria-hidden="true">⚄</span>
-        <p><strong>Your closet is empty.</strong><br>Add a few pieces or try the sample closet.</p>
+        <p><strong>Nothing here yet</strong><br>Snap a few clothes or try the sample closet.</p>
         <button class="primary" type="button" data-open="sheet-add">Add to closet</button>
       </div>
       <div class="closet-grid" id="closet-grid"></div>
-      <p class="micro">Saved in this browser. New photos are sent to Gemini for tagging.</p>
+      
     </section>
 
     <!-- MOODBOARD -->
     <section class="view" id="view-moodboard" data-view="moodboard" aria-labelledby="inspo-title" hidden>
       <header class="view-head">
         <div>
-          <p class="eyebrow">Out in the wild</p>
           <h2 id="inspo-title">Moodboard</h2>
-          <p id="inspo-status" class="sub" role="status">Roll an outfit to see photo inspiration from Unsplash.</p>
+          <p id="inspo-status" class="sub" role="status">Roll an outfit and real photos of similar looks show up here.</p>
         </div>
       </header>
       <div class="inspo-grid" id="inspo-grid"></div>
@@ -112,7 +110,7 @@
 <!-- SHEET: filters -->
 <dialog class="sheet" id="sheet-filters" aria-labelledby="filters-title">
   <div class="grabber" aria-hidden="true"></div>
-  <div class="sheet-head"><h3 id="filters-title">Set the vibe</h3><button class="sheet-x" type="button" data-close aria-label="Close">✕</button></div>
+  <div class="sheet-head"><h3 id="filters-title">Filters</h3><button class="sheet-x" type="button" data-close aria-label="Close">✕</button></div>
   <div class="field">
     <span class="field-label" id="occasion-label">Occasion</span>
     <div class="chips" data-chips="occasion" role="group" aria-labelledby="occasion-label"></div>
@@ -133,25 +131,25 @@
   <div class="list">
     <button id="upload" class="row" type="button" disabled>
       <span class="row-icon lime"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8.5A2.5 2.5 0 0 1 6.5 6h1.7l1.4-2h4.8l1.4 2h1.7A2.5 2.5 0 0 1 20 8.5v8a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 16.5z"/><circle cx="12" cy="12.5" r="3.5"/></svg></span>
-      <span class="row-text"><strong>Upload photos</strong><small>One garment per photo, plain background</small></span>
+      <span class="row-text"><strong>Upload photos</strong><small>One item per photo works best</small></span>
       <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
     </button>
     <button id="sample" class="row" type="button" disabled>
       <span class="row-icon"><span aria-hidden="true">⚄</span></span>
-      <span class="row-text"><strong>Load sample closet</strong><small>13 pieces to try it out</small></span>
+      <span class="row-text"><strong>Load sample closet</strong><small>13 example items</small></span>
       <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
     </button>
   </div>
   <input type="file" id="photos" accept="image/*" multiple hidden>
-  <p class="micro">Each new photo is tagged by Gemini once, then saved in this browser.</p>
+  <p class="micro">Photos are tagged once by Gemini, then saved on this device.</p>
 </dialog>
 
 <!-- SHEET: stylist note -->
 <dialog class="sheet" id="sheet-note" aria-labelledby="note-title">
   <div class="grabber" aria-hidden="true"></div>
-  <div class="sheet-head"><h3 id="note-title">✦ Why it works</h3><button class="sheet-x" type="button" data-close aria-label="Close">✕</button></div>
+  <div class="sheet-head"><h3 id="note-title">Why this works</h3><button class="sheet-x" type="button" data-close aria-label="Close">✕</button></div>
   <p id="note" role="status"></p>
-  <button class="ghost block" type="button" data-close>Got it</button>
+  <button class="ghost block" type="button" data-close>Close</button>
 </dialog>
 </body>
 </html>

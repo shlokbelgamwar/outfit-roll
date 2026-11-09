@@ -196,7 +196,7 @@ $('sample').onclick = async () => {
       for (const sample of samples) store.put(sample);
     });
     await refresh();
-    $('closet-status').textContent = 'Sample closet loaded. Give it a roll!';
+    $('closet-status').textContent = 'Sample closet added.';
   } catch {
     $('closet-status').textContent = 'This browser could not save the sample closet.';
   } finally {
@@ -207,11 +207,11 @@ $('sample').onclick = async () => {
 function clearLook() {
   revision++;
   active = undefined;
-  $('look').replaceChildren(make('p', 'empty-look', 'Load the sample closet or add your own pieces to get rolling.'));
-  $('rule').textContent = 'READY TO ROLL';
+  $('look').replaceChildren(make('p', 'empty-look', 'Nothing rolled yet. Add a few clothes, then tap Roll.'));
+  $('rule').textContent = 'Not rolled yet';
   $('stylist').hidden = true;
   $('inspo-grid').replaceChildren();
-  $('inspo-status').textContent = 'Roll an outfit to see photo inspiration from Unsplash.';
+  $('inspo-status').textContent = 'Roll an outfit and real photos of similar looks show up here.';
 }
 
 function inspirationQuery(outfit, occasion) {
@@ -281,7 +281,7 @@ $('roll').onclick = () => {
   $('look').classList.remove('rolling');
   $('look').replaceChildren(...outfit.items.map(item => card(item, false)));
   $('look').classList.add('rolling');
-  $('rule').textContent = outfit.rule.name.toUpperCase();
+  $('rule').textContent = outfit.rule.name;
   $('roll-status').textContent = 'Rolled ' + outfit.items.map(item => item.tags.subtype).join(', ') + '.';
   $('stylist').hidden = false;
   $('why').disabled = false;

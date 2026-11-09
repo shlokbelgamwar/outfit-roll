@@ -2,6 +2,8 @@
 // app.js owns the closet, rolling, and API logic. This file only handles presentation.
 const $ = id => document.getElementById(id);
 
+$('today').textContent = new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' });
+
 /* ---------- Tabs ---------- */
 const views = ['roll', 'closet', 'moodboard'];
 function show(name) {
@@ -103,7 +105,7 @@ summary();
 const grid = $('closet-grid');
 const updateCount = () => {
   const total = grid.children.length;
-  $('closet-count').textContent = total ? total + (total === 1 ? ' piece' : ' pieces') : 'No pieces yet';
+  $('closet-count').textContent = total ? total + (total === 1 ? ' item' : ' items') : 'No items yet';
   $('tab-count').textContent = total;
   $('tab-count').hidden = !total;
   $('closet-empty').hidden = total > 0;
@@ -127,3 +129,9 @@ $('roll').addEventListener('click', () => {
     setTimeout(() => $('result').scrollIntoView({ behavior: 'smooth', block: 'start' }), 60);
   }
 });
+
+/* ---------- Idle state for the color-match chip ---------- */
+const rule = $('rule');
+const syncRule = () => rule.classList.toggle('idle', rule.textContent === 'Not rolled yet');
+new MutationObserver(syncRule).observe(rule, { childList: true, characterData: true, subtree: true });
+syncRule();
