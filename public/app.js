@@ -62,7 +62,7 @@ function garmentArt(item) {
   garment.setAttribute('d', paths[item.tags.type]);
   garment.setAttribute('fill', item.hex);
   garment.setAttribute('stroke', '#23221d');
-  garment.setAttribute('stroke-width', '1.5');
+  garment.setAttribute('stroke-width', '1.2');
   garment.setAttribute('stroke-linejoin', 'round');
   svg.append(garment);
   art.append(svg);
