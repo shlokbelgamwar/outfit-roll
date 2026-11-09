@@ -48,11 +48,6 @@
           <p class="date" id="today"></p>
           <h1 id="roll-title">Good fits.<br><em>By chance.</em></h1>
           <p class="lede">Pick a vibe, then roll. We'll match colors from your closet.</p>
-          <button class="filter-pill" id="open-filters" type="button" aria-haspopup="dialog">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg>
-            <span id="filter-summary">Any occasion · Any weather</span>
-            <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
-          </button>
           <div class="dock">
             <button id="roll" class="roll" disabled><span class="roll-die" aria-hidden="true">⚄</span> <span id="roll-label">Roll an outfit</span></button>
           </div>
@@ -65,6 +60,11 @@
           </div>
           <div id="look" class="look empty"></div>
           <a class="go-closet" id="go-closet" href="#closet">Open closet ›</a>
+          <button class="filter-pill" id="open-filters" type="button" aria-haspopup="dialog">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg>
+            <span id="filter-summary">Any occasion · Any weather</span>
+            <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
+          </button>
           <p id="roll-status" class="feedback" role="status"></p>
           <div id="stylist" hidden>
             <div class="result-actions">

@@ -75,7 +75,7 @@ h3{font-size:19px;letter-spacing:-.015em;font-weight:650;margin:0}
 
 /* ---------- Roll view ---------- */
 .roll-aside{padding-top:16px}
-.filter-pill{display:flex;align-items:center;gap:10px;width:100%;min-height:54px;padding:0 16px 0 18px;border:1px solid var(--line);border-radius:var(--r-md);background:var(--surface);font-size:15px;font-weight:600;text-align:left;transition:transform .2s var(--spring),border-color .2s}
+.filter-pill{display:flex;align-items:center;gap:10px;width:100%;min-height:52px;margin-top:16px;padding:0 14px 0 16px;border:1px solid var(--line);border-radius:var(--r-md);background:var(--bg);font-size:15px;font-weight:600;text-align:left;transition:transform .2s var(--spring),border-color .2s}
 .filter-pill:hover{border-color:var(--line-strong)}
 .filter-pill>svg:first-child{width:20px;height:20px;color:var(--accent-text)}
 .filter-pill span{flex:1}
