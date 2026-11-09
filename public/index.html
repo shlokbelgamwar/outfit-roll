@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f8f7f2">
+  <meta name="description" content="Roll a color-matched outfit from clothes you already own.">
+  <title>Outfit Roll — A little luck looks good.</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23c9f46a'/%3E%3Cpath d='M8 8h4v4H8zm6 6h4v4h-4zm6 6h4v4h-4z' fill='%2323211c'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="/style.css">
+  <script src="https://unpkg.com/colorthief@3/dist/umd/color-thief.global.js" defer></script>
+  <script src="/app.js" type="module"></script>
+</head>
+<body>
+  <header class="bar wrap">
+    <a class="brand" href="#top"><span class="logo" aria-hidden="true">⚄</span> Outfit Roll<span>.</span></a>
+    <a class="navlink" href="#closet">My closet <span aria-hidden="true">↗</span></a>
+  </header>
+  <main id="top" class="wrap">
+    <section class="hero">
+      <p class="eyebrow"><span class="dot"></span> YOUR CLOSET, REMIXED</p>
+      <h1>Good fits.<br><em>By chance.</em></h1>
+      <p class="intro">Find a fresh way to wear what you already own.<br class="desktop"> Pick the vibe, roll the dice, and see what clicks.</p>
+      <span class="hero-die" aria-hidden="true">⚄</span>
+      <span class="sparkle" aria-hidden="true">✦</span>
+    </section>
+    <section class="stage" aria-labelledby="roll-title">
+      <div class="controls">
+        <p class="eyebrow index">01 / THE ROLL</p>
+        <h2 id="roll-title">Set the vibe.</h2>
+        <label for="occasion">Occasion</label>
+        <select id="occasion"><option value="">Any occasion</option><option value="casual">Casual</option><option value="smart">Smart</option><option value="formal">Formal</option></select>
+        <label for="weather">Weather</label>
+        <select id="weather"><option value="">Any weather</option><option value="warm">Warm</option><option value="mild">Mild</option><option value="cold">Cold</option></select>
+        <button id="roll" class="primary" disabled><span aria-hidden="true">⚄</span> Roll an outfit</button>
+        <p class="micro">Color-matched right in your browser.</p>
+      </div>
+      <div class="result" id="result" aria-busy="false">
+        <div class="result-head"><p class="eyebrow">YOUR LOOK</p><span class="chip" id="rule">READY TO ROLL</span></div>
+        <div id="look" class="look"><p class="empty-look">Load the sample closet or add your own pieces to get rolling.</p></div>
+        <p id="roll-status" class="feedback" role="status"></p>
+        <div id="stylist" hidden><button id="why" class="text-button">✦ Why does this work?</button><p id="note" role="status"></p></div>
+      </div>
+    </section>
+    <section id="closet" class="closet" aria-labelledby="closet-title">
+      <p class="eyebrow index">02 / THE WARDROBE</p>
+      <div class="section-head">
+        <div><h2 id="closet-title">My closet.</h2><p>Start with a top, a bottom, and a pair of shoes.</p></div>
+        <div class="actions">
+          <button id="sample" class="secondary" disabled>Load sample closet</button>
+          <button id="upload" class="primary" disabled>＋ Add clothes</button>
+          <input type="file" id="photos" accept="image/*" multiple hidden>
+        </div>
+      </div>
+      <p class="micro">Your closet is saved in this browser. New photos are sent to Gemini for tagging.</p>
+      <p id="closet-status" class="feedback" role="status"></p>
+      <div class="closet-grid" id="closet-grid"></div>
+    </section>
+    <section class="inspiration" aria-labelledby="inspo-title">
+      <p class="eyebrow index">03 / THE MOODBOARD</p>
+      <h2 id="inspo-title">Out in the wild.</h2>
+      <p id="inspo-status" class="feedback" role="status">Roll an outfit to see photo inspiration from Unsplash.</p>
+      <div class="inspo-grid" id="inspo-grid"></div>
+    </section>
+  </main>
+  <footer class="wrap">OUTFIT ROLL <span>✦</span> A LITTLE LUCK LOOKS GOOD.</footer>
+</body>
+</html>
