@@ -96,15 +96,26 @@ body:not([data-view=roll]) .dock{display:none}
 .result-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:2px 2px 16px}
 .label{font-size:15px;font-weight:650;color:var(--ink)}
 .chip{border-radius:100px;background:var(--accent-soft);color:var(--accent-deep);padding:5px 11px;font-size:13px;font-weight:600;white-space:nowrap}
-.chip:empty,.chip.idle{background:var(--fill);color:var(--muted)}
+.chip:empty,.chip.idle{display:none}
 .look{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.empty-look{grid-column:1/-1;display:grid;place-items:center;min-height:220px;text-align:center;margin:0;padding:28px;border:1.5px dashed var(--line-strong);border-radius:var(--r-lg);color:var(--muted);font-size:14px;line-height:1.5}
+.empty-look{grid-column:1/-1;text-align:left;margin:4px 0 0;color:var(--muted);font-size:14px;line-height:1.5}
+/* Ghost slots shown before the first roll */
+.slot .art{background:var(--bg);box-shadow:inset 0 0 0 1px var(--line)}
+.slot svg path{fill:var(--tile);stroke:var(--line-strong);stroke-width:1.5;stroke-linejoin:round}
+.slot .piece-name{color:var(--faint);font-weight:600}
+.slot:hover .art{transform:none}
+.look.empty .slot{animation:breathe 3.2s ease-in-out infinite}
+.look.empty .slot:nth-child(2){animation-delay:.2s}
+.look.empty .slot:nth-child(3){animation-delay:.4s}
+.look.empty .slot:nth-child(4){animation-delay:.6s}
+@keyframes breathe{50%{opacity:.6}}
 .go-closet{display:block;margin:12px 2px 0;color:var(--accent-text);font-size:14px;font-weight:700}
-.look.rolling .piece{animation:deal .55s var(--spring) both}
-.look.rolling .piece:nth-child(2){animation-delay:60ms}
-.look.rolling .piece:nth-child(3){animation-delay:120ms}
-.look.rolling .piece:nth-child(4){animation-delay:180ms}
-@keyframes deal{0%{opacity:0;transform:translateY(24px) rotate(-5deg) scale(.92)}100%{opacity:1;transform:none}}
+.look{perspective:900px}
+.look.rolling .piece{animation:flip .6s var(--spring) both;transform-origin:50% 60%;backface-visibility:hidden}
+.look.rolling .piece:nth-child(2){animation-delay:90ms}
+.look.rolling .piece:nth-child(3){animation-delay:180ms}
+.look.rolling .piece:nth-child(4){animation-delay:270ms}
+@keyframes flip{0%{opacity:0;transform:rotateY(-90deg) translateY(8px) scale(.94)}60%{opacity:1}100%{opacity:1;transform:none}}
 .feedback{font-size:13px;line-height:1.5;margin:14px 2px 0;color:var(--muted)}
 .feedback:empty{display:none}
 .result .feedback{color:var(--muted);font-size:14px}
@@ -241,7 +252,7 @@ img.art{padding:0;object-fit:cover}
   .result{margin:0;padding:24px}
   .look{grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px}
   .result .art{aspect-ratio:1.1}
-  .empty-look{min-height:360px}
+  .look.empty{grid-template-columns:repeat(4,minmax(0,1fr))}
 
   .closet-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:26px 16px}
   .inspo-grid{grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}

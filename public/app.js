@@ -218,12 +218,35 @@ $('sample').onclick = async () => {
   }
 };
 
+// Empty state: faint slots that show where each piece of the outfit will land.
+const slots = [['top', 'Top'], ['bottom', 'Bottom'], ['shoes', 'Shoes'], ['outerwear', 'Layer']];
+function renderGhosts() {
+  const ghosts = slots.map(([type, label]) => {
+    const node = make('div', 'piece slot');
+    node.setAttribute('aria-hidden', 'true');
+    const art = make('div', 'art');
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('viewBox', '0 0 160 134');
+    const shape = document.createElementNS(svg.namespaceURI, 'path');
+    shape.setAttribute('d', paths[type]);
+    svg.append(shape);
+    art.append(svg);
+    const info = make('div', 'piece-info');
+    info.append(make('div', 'piece-name', label));
+    node.append(art, info);
+    return node;
+  });
+  $('look').classList.remove('rolling');
+  $('look').classList.add('empty');
+  $('look').replaceChildren(...ghosts, make('p', 'empty-look', 'Nothing rolled yet. Add a few clothes, then tap Roll.'));
+}
+
 function clearLook() {
   revision++;
   active = undefined;
   kept.clear();
   $('roll-label').textContent = 'Roll an outfit';
-  $('look').replaceChildren(make('p', 'empty-look', 'Nothing rolled yet. Add a few clothes, then tap Roll.'));
+  renderGhosts();
   $('rule').textContent = 'Not rolled yet';
   $('stylist').hidden = true;
   $('inspo-grid').replaceChildren();
@@ -341,7 +364,7 @@ function showOutfit(outfit, occasion, message) {
   active = outfit;
   for (const id of [...kept]) if (!outfit.items.some(item => item.id === id)) kept.delete(id);
   const version = ++revision;
-  $('look').classList.remove('rolling');
+  $('look').classList.remove('rolling', 'empty');
   $('look').replaceChildren(...outfit.items.map(lookCard));
   void $('look').offsetWidth;
   $('look').classList.add('rolling');
@@ -427,6 +450,8 @@ $('why').onclick = () => {
   }));
   void showNote(outfit, revision);
 };
+
+renderGhosts();
 
 try {
   db = await openCloset();
