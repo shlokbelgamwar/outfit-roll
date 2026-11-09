@@ -82,12 +82,26 @@ function card(item, removable) {
     const button = make('button', 'remove', '×');
     button.setAttribute('aria-label', 'Remove ' + item.tags.subtype);
     button.onclick = async () => {
+      const status = $('closet-status');
       try {
         await dbRequest('readwrite', store => store.put({ ...item, image: undefined, removed: true }));
+        kept.delete(item.id);
         await refresh();
         if (active?.items.some(piece => piece.id === item.id)) clearLook();
+        const undo = make('button', 'undo', 'Undo');
+        undo.type = 'button';
+        undo.onclick = async () => {
+          try {
+            await dbRequest('readwrite', store => store.put({ ...item }));
+            await refresh();
+            status.textContent = item.tags.subtype + ' is back in your closet.';
+          } catch {
+            status.textContent = "We couldn't bring that back. Try adding the photo again.";
+          }
+        };
+        status.replaceChildren('Removed ' + item.tags.subtype + '. ', undo);
       } catch {
-        $('closet-status').textContent = 'This browser could not update your closet.';
+        status.textContent = "We couldn't update your closet. Please try again.";
       }
     };
     node.append(button);
@@ -167,7 +181,7 @@ $('photos').onchange = async event => {
   const errors = [];
   try {
     for (const [index, file] of files.entries()) {
-      $('closet-status').textContent = 'Checking photo ' + (index + 1) + ' of ' + files.length + '…';
+      $('closet-status').textContent = 'Reading photo ' + (index + 1) + ' of ' + files.length + '…';
       try {
         if (await addPhoto(file)) added++;
         else duplicates++;
@@ -178,12 +192,12 @@ $('photos').onchange = async event => {
     }
     await refresh();
   } catch {
-    errors.push('This browser could not reload your closet.');
+    errors.push("We couldn't reload your closet. Try refreshing the page.");
   } finally {
     $('upload').disabled = false;
     $('closet-status').textContent = [
-      added ? added + (added === 1 ? ' piece added.' : ' pieces added.') : '',
-      duplicates ? 'Duplicate photos were skipped.' : '',
+      added ? added + (added === 1 ? ' piece added to your closet.' : ' pieces added to your closet.') : '',
+      duplicates ? 'Skipped photos you already added.' : '',
       ...new Set(errors)
     ].filter(Boolean).join(' ');
   }
@@ -196,9 +210,9 @@ $('sample').onclick = async () => {
       for (const sample of samples) store.put(sample);
     });
     await refresh();
-    $('closet-status').textContent = 'Sample closet added.';
+    $('closet-status').textContent = 'Sample closet added. 13 pieces, ready to roll.';
   } catch {
-    $('closet-status').textContent = 'This browser could not save the sample closet.';
+    $('closet-status').textContent = "We couldn't save the sample closet in this browser. Try again?";
   } finally {
     $('sample').disabled = false;
   }
@@ -207,6 +221,8 @@ $('sample').onclick = async () => {
 function clearLook() {
   revision++;
   active = undefined;
+  kept.clear();
+  $('roll-label').textContent = 'Roll an outfit';
   $('look').replaceChildren(make('p', 'empty-look', 'Nothing rolled yet. Add a few clothes, then tap Roll.'));
   $('rule').textContent = 'Not rolled yet';
   $('stylist').hidden = true;
@@ -245,7 +261,7 @@ async function inspiration(query, version) {
     }
     const { photos } = await pending;
     if (version !== revision) return;
-    $('inspo-status').textContent = photos.length ? '' : 'No close matches on Unsplash for this look.';
+    $('inspo-status').textContent = photos.length ? '' : "We couldn't find close matches for this one. Roll again for new ideas.";
     for (const photo of photos) {
       const figure = make('figure');
       const link = credit('', photo.page);
@@ -265,29 +281,118 @@ async function inspiration(query, version) {
   }
 }
 
+const kept = new Set();
+const todayKey = 'outfit-roll:today';
+const stamp = () => new Date().toDateString();
+const readToday = () => {
+  try {
+    const saved = JSON.parse(localStorage.getItem(todayKey));
+    return saved?.date === stamp() ? saved : null;
+  } catch {
+    return null;
+  }
+};
+const writeToday = value => {
+  try {
+    if (value) localStorage.setItem(todayKey, JSON.stringify(value));
+    else localStorage.removeItem(todayKey);
+  } catch {
+    // Saving today's pick is a nice-to-have. Skip quietly if storage is blocked.
+  }
+};
+const names = items => {
+  const list = items.map(item => item.tags.subtype.toLowerCase());
+  return list.length < 2 ? list.join('') : list.slice(0, -1).join(', ') + ' and ' + list.at(-1);
+};
+
+function syncWear() {
+  const saved = readToday();
+  const wearing = Boolean(active && saved?.key === active.key);
+  $('wear').setAttribute('aria-pressed', String(wearing));
+  $('wear-label').textContent = wearing ? 'Wearing this today' : 'Wear this today';
+}
+
+function lookCard(item) {
+  const node = card(item, false);
+  const keep = make('button', 'keep');
+  keep.type = 'button';
+  const paint = on => {
+    keep.setAttribute('aria-pressed', String(on));
+    keep.setAttribute('aria-label', (on ? 'Stop keeping ' : 'Keep ') + item.tags.subtype + ' on the next roll');
+    keep.textContent = on ? 'Kept' : 'Keep';
+    node.classList.toggle('kept', on);
+  };
+  paint(kept.has(item.id));
+  keep.onclick = () => {
+    const on = !kept.has(item.id);
+    if (on) kept.add(item.id);
+    else kept.delete(item.id);
+    paint(on);
+    const keeping = active.items.filter(piece => kept.has(piece.id));
+    $('roll-status').textContent = keeping.length
+      ? 'Keeping your ' + names(keeping) + '. Everything else changes on the next roll.'
+      : 'Nothing kept. The next roll starts fresh.';
+  };
+  node.append(keep);
+  return node;
+}
+
+function showOutfit(outfit, occasion, message) {
+  active = outfit;
+  for (const id of [...kept]) if (!outfit.items.some(item => item.id === id)) kept.delete(id);
+  const version = ++revision;
+  $('look').classList.remove('rolling');
+  $('look').replaceChildren(...outfit.items.map(lookCard));
+  void $('look').offsetWidth;
+  $('look').classList.add('rolling');
+  $('rule').textContent = outfit.rule.name;
+  $('roll-status').textContent = message;
+  $('roll-label').textContent = 'Roll again';
+  $('stylist').hidden = false;
+  $('why').disabled = false;
+  $('note').textContent = notes.has(outfit.key) ? 'Looking at your colors…' : '';
+  if (notes.has(outfit.key)) showNote(outfit, version);
+  syncWear();
+  void inspiration(inspirationQuery(outfit, occasion), version);
+}
+
 $('roll').onclick = () => {
   const occasion = $('occasion').value;
   const weather = $('weather').value;
-  const outfit = rollOutfit(closet, occasion, weather, active?.key);
+  const keeping = active ? active.items.filter(item => kept.has(item.id)) : [];
+  const keptTypes = new Set(keeping.map(item => item.tags.type));
+  const pool = closet.filter(item => !keptTypes.has(item.tags.type) || kept.has(item.id));
+  const outfit = rollOutfit(pool, occasion, weather, active?.key);
   if (!outfit) {
+    if (keeping.length) {
+      $('roll-status').textContent = 'Nothing else matches your ' + names(keeping)
+        + ' with these filters. Let go of a kept piece or loosen the filters.';
+      return;
+    }
     clearLook();
     $('roll-status').textContent = weather === 'cold'
-      ? 'No color match for these filters. Cold rolls need a top, bottom, shoes, and outerwear.'
-      : 'No color match for these filters. Try a different filter or add more pieces.';
+      ? "We couldn't build a cold-weather look. It needs a top, bottom, shoes, and a jacket or coat."
+      : 'No color match with these filters yet. Try "Any", or add a few more pieces.';
     return;
   }
-  active = outfit;
-  const version = ++revision;
-  $('look').classList.remove('rolling');
-  $('look').replaceChildren(...outfit.items.map(item => card(item, false)));
-  $('look').classList.add('rolling');
-  $('rule').textContent = outfit.rule.name;
-  $('roll-status').textContent = 'Rolled ' + outfit.items.map(item => item.tags.subtype).join(', ') + '.';
-  $('stylist').hidden = false;
-  $('why').disabled = false;
-  $('note').textContent = notes.has(outfit.key) ? 'Finding the styling details…' : '';
-  if (notes.has(outfit.key)) showNote(outfit, version);
-  void inspiration(inspirationQuery(outfit, occasion), version);
+  navigator.vibrate?.(8);
+  showOutfit(outfit, occasion, keeping.length
+    ? 'Kept your ' + names(keeping) + ' and rolled the rest.'
+    : 'Here\'s ' + names(outfit.items) + '.');
+};
+
+$('wear').onclick = () => {
+  if (!active) return;
+  const saved = readToday();
+  if (saved?.key === active.key) {
+    writeToday(null);
+    $('roll-status').textContent = 'Unpicked. Roll again whenever you like.';
+  } else {
+    writeToday({ date: stamp(), key: active.key, ids: active.items.map(item => item.id),
+      rule: active.rule.name, occasion: $('occasion').value });
+    $('roll-status').textContent = 'Saved as today\'s outfit. Have a good one.';
+  }
+  syncWear();
 };
 
 async function showNote(outfit, version) {
@@ -313,7 +418,7 @@ $('why').onclick = () => {
     return;
   }
   $('why').disabled = true;
-  $('note').textContent = 'Finding the styling details…';
+  $('note').textContent = 'Looking at your colors…';
   notes.set(outfit.key, api('stylist', {
     items: outfit.items.map(item => item.tags), rule: outfit.rule.name
   }).catch(error => {
@@ -326,8 +431,14 @@ $('why').onclick = () => {
 try {
   db = await openCloset();
   await refresh();
+  const saved = readToday();
+  const pick = saved?.ids.map(id => closet.find(item => item.id === id));
+  if (pick?.length && pick.every(Boolean)) {
+    showOutfit({ items: pick, rule: { name: saved.rule }, key: saved.key }, saved.occasion || '',
+      'Here\'s what you picked for today.');
+  }
   $('upload').disabled = false;
   $('sample').disabled = false;
 } catch {
-  $('closet-status').textContent = 'Closet storage is unavailable. Open Outfit Roll in a browser that allows site storage.';
+  $('closet-status').textContent = "This browser is blocking storage, so we can't save your closet. Try another browser or turn off private mode.";
 }

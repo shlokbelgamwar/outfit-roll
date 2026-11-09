@@ -16,3 +16,9 @@ For local development with the Vercel CLI, run `vercel dev`. The sample closet a
 Photos are resized in the browser, then sent to Gemini only when an image has no saved analysis. The original file's SHA-256 fingerprint, resized image, extracted color, and tags are stored in IndexedDB. Duplicate uploads reuse tags, even after removing an item from the closet. Rejected requests can be retried by choosing the file again. Deduplication applies to identical files in the same browser and origin while its site data is retained.
 
 Rolling and color scoring run in the browser. The optional stylist note sends only the selected tags and color rule. The inspiration shelf sends a few color and occasion keywords to Unsplash and caches successful searches. It uses Unsplash-hosted images with linked photographer credits.
+
+## Everyday touches
+
+- **Keep a piece.** Tap Keep on any item in your look and the next roll only changes the rest.
+- **Wear this today.** Saves today's pick in this browser (localStorage) so it's waiting when you reopen the app. It resets the next day.
+- **Undo.** Removing a piece from the closet shows an Undo link.

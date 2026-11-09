@@ -2,7 +2,10 @@
 // app.js owns the closet, rolling, and API logic. This file only handles presentation.
 const $ = id => document.getElementById(id);
 
-$('today').textContent = new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' });
+const now = new Date();
+const part = now.getHours() < 12 ? 'morning' : now.getHours() < 17 ? 'afternoon' : 'evening';
+$('today').textContent = now.toLocaleDateString(undefined, { weekday: 'long' }) + ' ' + part + ' · '
+  + now.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
 
 /* ---------- Tabs ---------- */
 const views = ['roll', 'closet', 'moodboard'];

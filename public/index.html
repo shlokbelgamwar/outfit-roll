@@ -54,20 +54,24 @@
             <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
           </button>
           <div class="dock">
-            <button id="roll" class="roll" disabled><span class="roll-die" aria-hidden="true">⚄</span> Roll an outfit</button>
+            <button id="roll" class="roll" disabled><span class="roll-die" aria-hidden="true">⚄</span> <span id="roll-label">Roll an outfit</span></button>
           </div>
         </div>
 
         <div class="card result" id="result" aria-busy="false">
           <div class="result-head">
-            <span class="label">Color match</span>
+            <span class="label">Your look</span>
             <span class="chip" id="rule">Not rolled yet</span>
           </div>
           <div id="look" class="look"><p class="empty-look">Nothing rolled yet. Add a few clothes, then tap Roll.</p></div>
           <a class="go-closet" id="go-closet" href="#closet">Open closet ›</a>
           <p id="roll-status" class="feedback" role="status"></p>
           <div id="stylist" hidden>
-            <button id="why" class="why" type="button" aria-haspopup="dialog"><span>Why this works</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
+            <div class="result-actions">
+              <button id="wear" class="wear" type="button" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg><span id="wear-label">Wear this today</span></button>
+              <button id="why" class="why" type="button" aria-haspopup="dialog"><span>Why this works</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
+            </div>
+            <p class="hint">Tap <b>Keep</b> on any piece to hold onto it when you roll again.</p>
           </div>
         </div>
       </div>
