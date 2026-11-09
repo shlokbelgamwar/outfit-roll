@@ -176,6 +176,12 @@ img.art{padding:0;object-fit:cover}
 .row-text{flex:1;display:flex;flex-direction:column;gap:2px}
 .row-text strong{font-size:15px;font-weight:650}
 .row-text small{font-size:12.5px;color:var(--muted)}
+/* Welcome sheet */
+.welcome{text-align:center}
+.welcome-die{display:grid;place-items:center;width:64px;height:64px;margin:8px auto 18px;border-radius:18px;background:var(--lime);font-size:44px;line-height:1}
+.welcome h3{font-size:24px;letter-spacing:-.02em;margin-bottom:8px}
+.welcome-text{color:var(--muted);font-size:15px;line-height:1.5;margin:0 auto 18px;max-width:34ch}
+.welcome .ghost{margin-top:8px}
 #note{font-size:17px;line-height:1.6;margin:0 0 12px;padding:18px 20px;border-radius:var(--r-md);background:var(--surface);border:1px solid var(--line)}
 
 /* ---------- Tablet ---------- */
@@ -231,3 +237,4 @@ img.art{padding:0;object-fit:cover}
 }
 
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-delay:0ms!important;transition-duration:.01ms!important}}
+h3[tabindex="-1"]:focus{outline:none}

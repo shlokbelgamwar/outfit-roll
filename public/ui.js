@@ -135,3 +135,27 @@ const rule = $('rule');
 const syncRule = () => rule.classList.toggle('idle', rule.textContent === 'Not rolled yet');
 new MutationObserver(syncRule).observe(rule, { childList: true, characterData: true, subtree: true });
 syncRule();
+
+/* ---------- First-open welcome ---------- */
+// When the closet is empty, offer the sample closet once per visit.
+const seen = () => { try { return sessionStorage.getItem('welcome-seen') === '1'; } catch { return false; } };
+const markSeen = () => { try { sessionStorage.setItem('welcome-seen', '1'); } catch {} };
+let welcomeChecked = false;
+const maybeWelcome = () => {
+  // app.js enables the sample button once the closet has loaded from storage.
+  if (welcomeChecked || $('sample').disabled) return;
+  welcomeChecked = true;
+  if (grid.children.length === 0 && !seen()) setTimeout(() => openSheet('sheet-welcome'), 350);
+};
+new MutationObserver(maybeWelcome).observe($('sample'), { attributes: true, attributeFilter: ['disabled'] });
+maybeWelcome();
+$('sheet-welcome').addEventListener('close', markSeen);
+$('welcome-sample').addEventListener('click', () => {
+  $('sample').click();
+  closeSheet($('sheet-welcome'));
+});
+$('welcome-own').addEventListener('click', () => {
+  closeSheet($('sheet-welcome'));
+  location.hash = 'closet';
+  setTimeout(() => openSheet('sheet-add'), 300);
+});
