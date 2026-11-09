@@ -284,7 +284,7 @@ $('roll').onclick = () => {
   $('rule').textContent = outfit.rule.name.toUpperCase();
   $('roll-status').textContent = 'Rolled ' + outfit.items.map(item => item.tags.subtype).join(', ') + '.';
   $('stylist').hidden = false;
-  $('why').disabled = notes.has(outfit.key);
+  $('why').disabled = false;
   $('note').textContent = notes.has(outfit.key) ? 'Finding the styling details…' : '';
   if (notes.has(outfit.key)) showNote(outfit, version);
   void inspiration(inspirationQuery(outfit, occasion), version);
@@ -293,7 +293,10 @@ $('roll').onclick = () => {
 async function showNote(outfit, version) {
   try {
     const { note } = await notes.get(outfit.key);
-    if (version === revision) $('note').textContent = note;
+    if (version === revision) {
+      $('note').textContent = note;
+      $('why').disabled = false;
+    }
   } catch (error) {
     if (version === revision) {
       $('note').textContent = error.message;
@@ -305,6 +308,10 @@ async function showNote(outfit, version) {
 $('why').onclick = () => {
   if (!active) return;
   const outfit = active;
+  if (notes.has(outfit.key)) {
+    void showNote(outfit, revision);
+    return;
+  }
   $('why').disabled = true;
   $('note').textContent = 'Finding the styling details…';
   notes.set(outfit.key, api('stylist', {
