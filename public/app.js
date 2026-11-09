@@ -1,4 +1,4 @@
-import { samples, rollOutfit } from './wardrobe.js';
+import { samples, rollOutfit, countMatches } from './wardrobe.js';
 
 const $ = id => document.getElementById(id);
 const make = (tag, className, text) => {
@@ -44,7 +44,26 @@ async function refresh() {
   closet = (await dbRequest('readonly', store => store.getAll())).filter(item => !item.removed);
   $('closet-grid').replaceChildren(...closet.map(item => card(item, true)));
   $('roll').disabled = closet.length === 0;
+  updateMatches();
 }
+
+// Live count under the filter chips, so people see a dead end before they roll into it.
+function updateMatches() {
+  const label = $('match-count');
+  if (!closet.length) {
+    label.textContent = '';
+    return;
+  }
+  const keeping = active ? active.items.filter(item => kept.has(item.id)) : [];
+  const keptTypes = new Set(keeping.map(item => item.tags.type));
+  const pool = closet.filter(item => !keptTypes.has(item.tags.type) || kept.has(item.id));
+  const total = countMatches(pool, $('occasion').value, $('weather').value);
+  label.classList.toggle('none', total === 0);
+  label.textContent = total === 0 ? 'No matches. Try Any.'
+    : (total > 99 ? '99+' : total) + (total === 1 ? ' match' : ' matches');
+}
+$('occasion').addEventListener('change', () => updateMatches());
+$('weather').addEventListener('change', () => updateMatches());
 
 function garmentArt(item) {
   if (item.image) {
@@ -246,6 +265,7 @@ function clearLook() {
   active = undefined;
   kept.clear();
   $('roll-label').textContent = 'Roll an outfit';
+  if (typeof closet !== 'undefined') updateMatches();
   renderGhosts();
   $('rule').textContent = 'Not rolled yet';
   $('stylist').hidden = true;
@@ -351,6 +371,7 @@ function lookCard(item) {
     if (on) kept.add(item.id);
     else kept.delete(item.id);
     paint(on);
+    updateMatches();
     const keeping = active.items.filter(piece => kept.has(piece.id));
     $('roll-status').textContent = keeping.length
       ? 'Keeping your ' + names(keeping) + '. Everything else changes on the next roll.'

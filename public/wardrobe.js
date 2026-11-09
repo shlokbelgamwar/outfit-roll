@@ -49,10 +49,34 @@ function palette(items) {
   return { name: 'Mixed Palette', score: 45 };
 }
 
-export function rollOutfit(closet, occasion, weather, lastKey) {
+function suitableFor(closet, occasion, weather) {
   const season = { warm: ['summer'], mild: ['spring', 'fall'], cold: ['winter'] }[weather];
-  const suitable = closet.filter(({ tags }) => (!occasion || tags.formality === occasion)
+  return closet.filter(({ tags }) => (!occasion || tags.formality === occasion)
     && (!season || season.some(value => tags.season.includes(value))));
+}
+
+// How many color-matched outfits these filters allow. Stops counting at cap.
+export function countMatches(closet, occasion, weather, cap = 99) {
+  const suitable = suitableFor(closet, occasion, weather);
+  const of = type => suitable.filter(item => item.tags.type === type);
+  const coats = weather === 'warm' ? [] : of('outerwear');
+  const outerwear = weather === 'cold' ? coats : [null, ...coats];
+  let count = 0;
+  for (const top of of('top')) {
+    for (const bottom of of('bottom')) {
+      for (const shoes of of('shoes')) {
+        for (const coat of outerwear) {
+          const items = coat ? [top, bottom, shoes, coat] : [top, bottom, shoes];
+          if (palette(items).score >= 80 && ++count > cap) return count;
+        }
+      }
+    }
+  }
+  return count;
+}
+
+export function rollOutfit(closet, occasion, weather, lastKey) {
+  const suitable = suitableFor(closet, occasion, weather);
   const pieces = type => suitable.filter(item => item.tags.type === type)
     .map(item => ({ item, order: Math.random() })).sort((a, b) => a.order - b.order)
     .slice(0, 12).map(({ item }) => item);

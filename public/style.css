@@ -47,7 +47,7 @@ h3{font-size:19px;letter-spacing:-.015em;font-weight:650;margin:0}
 .primary:hover:not(:disabled){background:var(--accent-hover)}
 .ghost{background:var(--fill);border:0}
 .ghost:hover{background:var(--line)}
-.primary:active,.ghost:active,.roll:active:not(:disabled),.row:active,.round-btn:active,.filter-pill:active,.tab:active{transform:scale(.96)}
+.primary:active,.ghost:active,.roll:active:not(:disabled),.row:active,.round-btn:active,.tab:active{transform:scale(.96)}
 .block{display:flex;width:100%}
 .round-btn{flex:none;display:grid;place-items:center;width:44px;height:44px;border-radius:50%;border:0;background:var(--accent);color:var(--on-accent);transition:transform .2s var(--spring)}
 .round-btn svg{width:22px;height:22px;stroke-width:2.2}
@@ -75,10 +75,21 @@ h3{font-size:19px;letter-spacing:-.015em;font-weight:650;margin:0}
 
 /* ---------- Roll view ---------- */
 .roll-aside{padding-top:16px}
-.filter-pill{display:flex;align-items:center;gap:10px;width:100%;min-height:52px;margin-top:16px;padding:0 14px 0 16px;border:1px solid var(--line);border-radius:var(--r-md);background:var(--bg);font-size:15px;font-weight:600;text-align:left;transition:transform .2s var(--spring),border-color .2s}
-.filter-pill:hover{border-color:var(--line-strong)}
-.filter-pill>svg:first-child{width:20px;height:20px;color:var(--accent-text)}
-.filter-pill span{flex:1}
+/* Filter chips inside the look card */
+.filters{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-top:16px}
+.fchip{display:inline-flex;align-items:center;border-radius:100px;background:var(--fill);transition:background .2s}
+.fchip-main{display:inline-flex;align-items:center;gap:4px;min-height:40px;padding:0 12px 0 16px;border:0;border-radius:100px;background:transparent;font-size:14px;font-weight:600;transition:transform .2s var(--spring)}
+.fchip-main:active{transform:scale(.96)}
+.fchip-main .chev{width:16px;height:16px}
+.fchip:hover{background:var(--line)}
+.fchip.active{background:var(--accent-soft);color:var(--accent-deep)}
+.fchip.active .chev{color:var(--accent-deep)}
+.fchip.active .fchip-main{padding-right:6px}
+.fchip-x{display:grid;place-items:center;width:28px;height:28px;margin-right:6px;border:0;border-radius:50%;background:rgba(64,83,31,.12);color:var(--accent-deep);font-size:11px}
+.fchip-x:hover{background:rgba(64,83,31,.22)}
+.match-count{margin:0 0 0 auto;font-size:13px;font-weight:600;color:var(--muted)}
+.match-count.none{color:#a2492b}
+.match-count:empty{display:none}
 .chev{width:18px;height:18px;color:var(--faint)}
 /* Floating roll button above the tab bar on mobile */
 .dock{position:fixed;z-index:15;left:18px;right:18px;bottom:calc(var(--tabbar) + 22px + var(--safe-b))}
@@ -268,3 +279,6 @@ img.art{padding:0;object-fit:cover}
 
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-delay:0ms!important;transition-duration:.01ms!important}}
 h3[tabindex="-1"]:focus{outline:none}
+
+#sheet-filters .field-label{display:none}
+#sheet-filters .field{margin-bottom:8px}

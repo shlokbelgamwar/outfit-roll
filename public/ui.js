@@ -71,38 +71,64 @@ for (const sheet of document.querySelectorAll('.sheet')) {
   }
 }
 for (const opener of document.querySelectorAll('[data-open]')) opener.addEventListener('click', () => openSheet(opener.dataset.open));
-$('open-filters').addEventListener('click', () => openSheet('sheet-filters'));
 $('open-add').addEventListener('click', () => openSheet('sheet-add'));
 $('why').addEventListener('click', () => openSheet('sheet-note'));
 $('sample').addEventListener('click', () => closeSheet($('sheet-add')));
 $('photos').addEventListener('change', () => closeSheet($('sheet-add')));
 
-/* ---------- Filter chips ---------- */
-const summary = () => {
-  const label = id => $(id).selectedOptions[0].text;
-  $('filter-summary').textContent = label('occasion') + ' · ' + label('weather');
-};
-for (const id of ['occasion', 'weather']) {
+/* ---------- Filters: two chips in the card, one sheet per field ---------- */
+const fieldNames = { occasion: 'Occasion', weather: 'Weather' };
+const pressButtons = {};
+
+function syncChips() {
+  for (const id of Object.keys(fieldNames)) {
+    const select = $(id);
+    const chip = document.querySelector(`.fchip[data-field="${id}"]`);
+    const active = select.value !== '';
+    chip.classList.toggle('active', active);
+    chip.querySelector('.fchip-label').textContent = select.selectedOptions[0].text;
+    chip.querySelector('.fchip-x').hidden = !active;
+    for (const button of pressButtons[id]) button.setAttribute('aria-pressed', String(button.dataset.value === select.value));
+  }
+}
+
+function setFilter(id, value) {
+  const select = $(id);
+  if (select.value === value) return;
+  select.value = value;
+  select.dispatchEvent(new Event('change', { bubbles: true }));
+  syncChips();
+}
+
+function openFilter(id) {
+  for (const field of document.querySelectorAll('#sheet-filters .field')) field.hidden = field.dataset.field !== id;
+  $('filters-title').textContent = fieldNames[id];
+  openSheet('sheet-filters');
+}
+
+for (const id of Object.keys(fieldNames)) {
   const select = $(id);
   const group = document.querySelector(`[data-chips="${id}"]`);
-  const buttons = [];
+  pressButtons[id] = [];
   for (const option of select.options) {
     const button = document.createElement('button');
     button.type = 'button';
     button.className = 'chip-btn';
+    button.dataset.value = option.value;
     button.textContent = option.value ? option.text : 'Any';
-    button.setAttribute('aria-pressed', String(option.selected));
+    // One tap picks and closes, so changing the vibe is quick.
     button.onclick = () => {
-      select.value = option.value;
-      select.dispatchEvent(new Event('change', { bubbles: true }));
-      for (const other of buttons) other.setAttribute('aria-pressed', String(other === button));
-      summary();
+      setFilter(id, option.value);
+      setTimeout(() => closeSheet($('sheet-filters')), 160);
     };
-    buttons.push(button);
+    pressButtons[id].push(button);
     group.append(button);
   }
+  const chip = document.querySelector(`.fchip[data-field="${id}"]`);
+  chip.querySelector('.fchip-main').addEventListener('click', () => openFilter(id));
+  chip.querySelector('.fchip-x').addEventListener('click', () => setFilter(id, ''));
 }
-summary();
+syncChips();
 
 /* ---------- Closet count + empty states ---------- */
 const grid = $('closet-grid');

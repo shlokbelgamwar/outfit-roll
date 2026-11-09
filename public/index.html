@@ -60,11 +60,17 @@
           </div>
           <div id="look" class="look empty"></div>
           <a class="go-closet" id="go-closet" href="#closet">Open closet ›</a>
-          <button class="filter-pill" id="open-filters" type="button" aria-haspopup="dialog">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg>
-            <span id="filter-summary">Any occasion · Any weather</span>
-            <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
-          </button>
+          <div class="filters" role="group" aria-label="Filters">
+            <div class="fchip" data-field="occasion">
+              <button type="button" class="fchip-main" aria-haspopup="dialog"><span class="fchip-label">Any occasion</span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+              <button type="button" class="fchip-x" aria-label="Clear occasion" hidden>✕</button>
+            </div>
+            <div class="fchip" data-field="weather">
+              <button type="button" class="fchip-main" aria-haspopup="dialog"><span class="fchip-label">Any weather</span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+              <button type="button" class="fchip-x" aria-label="Clear weather" hidden>✕</button>
+            </div>
+            <p class="match-count" id="match-count" role="status"></p>
+          </div>
           <p id="roll-status" class="feedback" role="status"></p>
           <div id="stylist" hidden>
             <div class="result-actions">
@@ -125,17 +131,16 @@
 <dialog class="sheet" id="sheet-filters" aria-labelledby="filters-title">
   <div class="grabber" aria-hidden="true"></div>
   <div class="sheet-head"><h3 id="filters-title">Filters</h3><button class="sheet-x" type="button" data-close aria-label="Close">✕</button></div>
-  <div class="field">
+  <div class="field" data-field="occasion">
     <span class="field-label" id="occasion-label">Occasion</span>
     <div class="chips" data-chips="occasion" role="group" aria-labelledby="occasion-label"></div>
     <select id="occasion" class="native" tabindex="-1" aria-hidden="true"><option value="">Any occasion</option><option value="casual">Casual</option><option value="smart">Smart</option><option value="formal">Formal</option></select>
   </div>
-  <div class="field">
+  <div class="field" data-field="weather">
     <span class="field-label" id="weather-label">Weather</span>
     <div class="chips" data-chips="weather" role="group" aria-labelledby="weather-label"></div>
     <select id="weather" class="native" tabindex="-1" aria-hidden="true"><option value="">Any weather</option><option value="warm">Warm</option><option value="mild">Mild</option><option value="cold">Cold</option></select>
   </div>
-  <button class="primary block" type="button" data-close>Done</button>
 </dialog>
 
 <!-- SHEET: add to closet -->
