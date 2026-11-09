@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#f7f4ed">
   <meta name="description" content="Roll a color-matched outfit from clothes you already own.">
   <title>Outfit Roll</title>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23dbe2c8'/%3E%3Cpath d='M8 8h4v4H8zm6 6h4v4h-4zm6 6h4v4h-4z' fill='%2323211c'/%3E%3C/svg%3E">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23cbf36d'/%3E%3Cpath d='M8 8h4v4H8zm6 6h4v4h-4zm6 6h4v4h-4z' fill='%2323211c'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="/style.css">
   <script src="https://unpkg.com/colorthief@3/dist/umd/color-thief.global.js" defer></script>
   <script src="/app.js" type="module"></script>
@@ -23,15 +23,18 @@
     </section>
     <section class="stage" aria-labelledby="roll-title">
       <div class="controls">
-        <h2 id="roll-title">Pick your filters</h2>
-        <label for="occasion">Occasion</label>
-        <select id="occasion"><option value="">Any occasion</option><option value="casual">Casual</option><option value="smart">Smart</option><option value="formal">Formal</option></select>
-        <label for="weather">Weather</label>
-        <select id="weather"><option value="">Any weather</option><option value="warm">Warm</option><option value="mild">Mild</option><option value="cold">Cold</option></select>
+        <div class="filter">
+          <label for="occasion">Occasion</label>
+          <select id="occasion"><option value="">Any occasion</option><option value="casual">Casual</option><option value="smart">Smart</option><option value="formal">Formal</option></select>
+        </div>
+        <div class="filter">
+          <label for="weather">Weather</label>
+          <select id="weather"><option value="">Any weather</option><option value="warm">Warm</option><option value="mild">Mild</option><option value="cold">Cold</option></select>
+        </div>
         <button id="roll" class="primary" disabled><span aria-hidden="true">⚄</span> Roll an outfit</button>
       </div>
       <div class="result" id="result" aria-busy="false">
-        <div class="result-head"><p class="result-label">Your outfit</p><span class="chip" id="rule">READY TO ROLL</span></div>
+        <div class="result-head"><h2 id="roll-title" class="result-label">Your outfit</h2><span class="chip" id="rule">READY TO ROLL</span></div>
         <div id="look" class="look"><p class="empty-look">Load the sample closet or add your own pieces to get rolling.</p></div>
         <p id="roll-status" class="feedback" role="status"></p>
         <div id="stylist" hidden><button id="why" class="text-button">Why does this work?</button><p id="note" role="status"></p></div>
@@ -39,7 +42,7 @@
     </section>
     <section id="closet" class="closet" aria-labelledby="closet-title">
       <div class="section-head">
-        <div><h2 id="closet-title">My closet</h2><p>Start with a top, a bottom, and a pair of shoes.</p></div>
+        <h2 id="closet-title">My closet</h2>
         <div class="actions">
           <button id="sample" class="secondary" disabled>Load sample closet</button>
           <button id="upload" class="primary" disabled>＋ Add clothes</button>
